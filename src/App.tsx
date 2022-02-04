@@ -24,9 +24,10 @@ import Dashboard from './features/dashboard/dashboard';
 // Redux
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { selectAccount, setOwner, signOutAccount } from './features/auth/ownerSlice';
+import { fetchOwnersNFTs } from './features/nfts/nftsSlice';
 
 let AuthContext = React.createContext<AuthContextType>(null!);
-let INFURA_KEY = process.env.REACT_APP_INFURA_KEY? process.env.REACT_APP_INFURA_KEY: ''; 
+const INFURA_KEY = process.env.REACT_APP_INFURA_KEY? process.env.REACT_APP_INFURA_KEY: ''; 
 const MESSAGE_TO_SIGN = 'Your message that users will sign';
 
 export default function App() {
@@ -94,6 +95,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     return web3AuthProvider.signup(newUser, async () => {
       if (web3AuthProvider.isAuthenticated && newUser.signature && web3AuthProvider.isSignedUp) {
         dispatch(setOwner(web3AuthProvider.owner));
+        dispatch(fetchOwnersNFTs(web3AuthProvider.owner.account));
       }
       callback()
     });
@@ -103,6 +105,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     return web3AuthProvider.signin(newUser, async () => {
       if (web3AuthProvider.isAuthenticated && newUser.signature) {
         dispatch(setOwner(web3AuthProvider.owner));
+        dispatch(fetchOwnersNFTs(web3AuthProvider.owner.account));
       }
       callback()
     });

@@ -10,14 +10,14 @@ export default function NFTs() {
 
     const selectNFT = (event: any, id: string) => {
         event.preventDefault();
-        navigate(`/nfta/${id}`);
+        navigate(`/nfts/${id}`);
     }
 
     const renderNFTData = (nft: any) => {
         return (
-            <tr key={nft.id} className="nft-select" onClick={(e) => selectNFT(e, nft.account)}>
-                <th>{nft.name}</th>
-                <td>{nft.email}</td>
+            <tr key={nft.id} className="nft-select" onClick={(e) => selectNFT(e, nft.id)}>
+                <th>{nft.id}</th>
+                <td>{nft.name}</td>
                 <td>{nft.owner}</td>
             </tr>
         );

@@ -15,9 +15,10 @@ import { fetchOwner, postOwner } from "./ownerAPI";
     async signup(ownerData: ActionData, callback: VoidFunction) {
       // create owner from mock api
       const ownerResult = await postOwner(ownerData);
-      if (ownerResult.data) {
+      if (ownerResult) {
         web3AuthProvider.isSignedUp = ownerResult.ownerCreated;
         web3AuthProvider.owner  = ownerResult.data;
+        web3AuthProvider.isAuthenticated = true;
       }
       callback();
     },
