@@ -1,0 +1,13 @@
+.dashboard {
+    text-align: center;
+    margin: 5%;
+}
+
+/* Tablet styling */
+@media only screen and (min-width: 768px) {}
+  
+/* Desktop styling */
+@media only screen and (min-width: 1024px) {}
+  
+/* Desktop Large styling */
+@media only screen and (min-width: 1440px) {}
