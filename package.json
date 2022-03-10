@@ -1,7 +1,6 @@
 {
   "name": "web3-cloud-quick-start",
   "version": "0.3.3",
-  "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "1.7.2",
     "@testing-library/jest-dom": "^5.16.2",
