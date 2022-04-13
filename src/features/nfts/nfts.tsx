@@ -1,8 +1,8 @@
 import  React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
-import './nfts.css';
-import { selectNFTsList } from "./nftsSlice";
+import './nfts.scss';
+import { NFTProps, selectNFTsList } from "./nftsSlice";
 
 export default function NFTs() {
     const navigate = useNavigate();
@@ -38,7 +38,7 @@ export default function NFTs() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {nftList.map((nft) => renderNFTData(nft))}
+                                {nftList.map((nft: NFTProps) => renderNFTData(nft))}
                             </tbody>
                         </table>
                     }

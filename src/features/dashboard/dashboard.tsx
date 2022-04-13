@@ -1,7 +1,7 @@
 import  React from "react";
 import { useAppSelector } from "../../app/hooks";
-import { selectAccount, selectEmail, selectFirstName, selectLastName } from "../auth/ownerSlice";
-import './dashboard.css';
+import { selectFirstName, selectLastName, selectEmail, selectAccount } from "../auth/userSlice";
+import './dashboard.scss';
 
 export default function Dashboard() {
   const firstName = useAppSelector(selectFirstName);

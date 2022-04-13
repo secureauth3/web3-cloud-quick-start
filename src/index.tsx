@@ -8,12 +8,17 @@ import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 
+// Secure Auth3 Authentication provider
+import { SecureAuth3Provider } from 'web3-cloud';
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+        <BrowserRouter>
+          <SecureAuth3Provider apiKey="xxxxxxxxxxxxxxx" appId="xxxxxxxxxxx">
+            <App />
+          </SecureAuth3Provider> 
+        </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
