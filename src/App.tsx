@@ -15,8 +15,8 @@ import NFTs from './features/nfts/nfts';
 import NFT from './features/nfts/nft/nft';
 import Dashboard from './features/dashboard/dashboard';
 import Nav from './features/nav/nav';
-import AuthPage from './features/auth/AuthPage';
-import { RequireAuth } from './features/auth/RequireAuth';
+import { RequireAuth } from './features/auth/requireAuth';
+import AuthPage from './features/auth/authPage';
 
 // Secure Auth3 Auth hook
 

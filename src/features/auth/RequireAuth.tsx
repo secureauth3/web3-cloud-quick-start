@@ -1,7 +1,7 @@
 import  React from "react";
 import {
-    useLocation,
-    Navigate,
+  useLocation,
+  Navigate,
 } from 'react-router-dom';
 import { useAppSelector } from "../../app/hooks";
 import { selectAccount } from "./userSlice";
