@@ -1,63 +1,102 @@
 import React, { useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Form, useAuth } from "web3-cloud";
-import { ErrorMessageData, FormSignatureData } from "../../interface/web3-cloud-data-interface";
+import { ErrorMessageData, Form, FormSignatureData, NewAuth3User, useAuth } from "web3-cloud";
+
+import { useAppDispatch } from "../../app/hooks";
+import { setAccesToken, setisVerified, setUser } from "./userSlice";
+
 import Loading from "../loading/Loading";
 import './authPage.scss';
 
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY? process.env.REACT_APP_INFURA_KEY: ''; 
 
 export default function AuthPage() {
-  const MESSAGE_TO_SIGN = 'Your message that users will sign';
   let auth = useAuth();
+  const dispatch = useAppDispatch();
   let navigate = useNavigate();
   let location: any = useLocation();
+
+  const MESSAGE_TO_SIGN = 'Your message that users will sign';
   let from = location.state?.from?.pathname || "/dashboard";
   const [errorMessage, setErrorMessage] = useState('');
   const [isVerifiying, setIsVerifiying] = useState(false);
 
+
   const authCallbackData = useCallback(async (web3Values: FormSignatureData) => {
     try {
+      let signInResults;
       setIsVerifiying(true);
       switch(web3Values.actionType) {
         case 'SIGN_UP':
           // Sign up user
-          const signUpResults = await auth.auth3Signup( {
-            account: '',
-            email: '',
-            firstName: '',
-            lastName: '',
-            ens: '',
-            chainId: 1,
-            permissionFlag: 3,
-          });
+          const DEFAULT_NAME = {
+            firstName: 'First',
+            lastName: 'Last',
+          }
+          const signUpResults = await auth.auth3Signup(
+            {
+              account: web3Values.address,
+              email: web3Values.email,
+              firstName: web3Values.firstName? web3Values.firstName : DEFAULT_NAME.firstName,
+              lastName: web3Values.lastName? web3Values.lastName : DEFAULT_NAME.lastName,
+              ens: web3Values.ens,
+              chainId: web3Values.chainId,
+              permissionFlag: 3,
+            } as NewAuth3User
+          );
+          console.log('sign up results:',signUpResults);
           if (!signUpResults.isSignedUp) {
             setErrorMessage(signUpResults.authError);
             setIsVerifiying(false);
             return;
           }
 
-          // Sign In user
-          const signInResults = await auth.auth3Signin({
-            address: '',
-            email: '',
-            signature: '',
-            message: ''
+          // Sign in user after account creation sucessful
+          signInResults = await auth.auth3Signin({
+            address: web3Values.address,
+            email: web3Values.email,
+            signature: web3Values.signature,
+            message: web3Values.message
           });
+          console.log('verify results:',signInResults);
           if (!signInResults.isAuthenticated) {
-            setErrorMessage(signUpResults.authError);
+            setErrorMessage(signInResults.authError);
             setIsVerifiying(false);
             return;
           }
-
-          // Save authenicated user in Redux store
+      
+          // Save authenicated user and acces token in Redux store
+          dispatch(setisVerified(signInResults.isAuthenticated));
+          dispatch(setAccesToken(signInResults.accessToken));
+          dispatch(setUser(signInResults.user));
 
           // Navigate to protected route
-          setErrorMessage('');
-          setIsVerifiying(false);
+          console.log('passed verification, navigating to:', from);
           navigate(from, { replace: true });
           break;
         case 'SIGN_IN':
+          // Sign in user after account creation sucessful
+          signInResults = await auth.auth3Signin({
+            address: web3Values.address,
+            email: web3Values.email,
+            signature: web3Values.signature,
+            message: web3Values.message
+          });
+          console.log('verify results:',signInResults);
+          if (!signInResults.isAuthenticated) {
+            setErrorMessage(signInResults.authError);
+            setIsVerifiying(false);
+            return;
+          }
+    
+          // Save authenicated user and acces token in Redux store
+          dispatch(setisVerified(signInResults.isAuthenticated));
+          dispatch(setAccesToken(signInResults.accessToken));
+          dispatch(setUser(signInResults.user));
+
+          // Navigate to protected route
+          console.log('passed verification, navigating to:', from);
+          navigate(from, { replace: true });
           break;
         default:
           break;
@@ -66,8 +105,8 @@ export default function AuthPage() {
       console.log(err)
       setIsVerifiying(false);
       setErrorMessage('Error when trying to sign in/sign up.')
-      }  
-  }, [auth, from, navigate]);
+    }  
+  }, [auth, dispatch, from, navigate]);
   
   const authCallbackError = useCallback((error: ErrorMessageData) => {
     setIsVerifiying(false);
@@ -90,14 +129,6 @@ export default function AuthPage() {
               messageToSign={MESSAGE_TO_SIGN}
               infuraId={INFURA_KEY? INFURA_KEY : ''}   
               logourl='https://idrisbowman.com/images/idrisBowmanIcon.jpg'
-              // backend={
-              //   {
-              //     endpoint: `https://localhost:8080/api/v1/auth/nonce`,
-              //     requestOptions: {
-              //       method: 'GET',
-              // }
-              //   }
-              // }
               homePageurl='https://www.secureauth3.com'
               formDataCallback={authCallbackData}
               formErrorCallback={authCallbackError}   

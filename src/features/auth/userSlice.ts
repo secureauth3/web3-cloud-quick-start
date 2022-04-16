@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ethers } from 'ethers';
+import { act } from 'react-dom/test-utils';
+import { VerifiedAuth3User } from 'web3-cloud';
 import { RootState } from '../../app/store';
 import { fetchUser } from './userAPI';
 
@@ -7,14 +9,15 @@ export interface UserState {
   account: string;
   dappName: string;
   permissionFlags: number;
+  permissionType: string;
   email: string;
   firstName: string;
   lastName: string;
   ens: string;
-  startDate: number;
+  lastLogin: number;
   chainId: number;
   accessToken: string;
-  ethersWeb3Provider: ethers.providers.Web3Provider | null;
+  ethersWeb3Provider: ethers.providers.Web3Provider;
   isVerified: boolean;
   status: 'idle' | 'loading' | 'failed'
 }
@@ -26,13 +29,14 @@ const initialState: UserState = {
   email: '',
   firstName: '',
   lastName: '',
+  permissionType: '',
   ens: '',
-  startDate: 0,
+  lastLogin: 0,
   chainId: 0,
   status: 'idle',
   accessToken: '',
   isVerified: false,
-  ethersWeb3Provider: null
+  ethersWeb3Provider: {} as ethers.providers.Web3Provider
 };
 
 export const fetchUserById = createAsyncThunk(
@@ -53,7 +57,10 @@ const userSlice = createSlice({
     setAccesToken: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload;
     },
-    setUser: (state, action: PayloadAction<any>) => {
+    setisVerified: (state, action: PayloadAction<boolean>) => {
+      state.isVerified = action.payload;
+    },
+    setUser: (state, action: PayloadAction<VerifiedAuth3User>) => {
       state.account = action.payload.account;
       state.dappName = action.payload.dappName;
       state.permissionFlags = action.payload.permissionFlags;
@@ -61,8 +68,9 @@ const userSlice = createSlice({
       state.firstName = action.payload.firstName;
       state.lastName = action.payload.lastName;
       state.ens = action.payload.ens;
-      state.startDate = action.payload.startDate;
+      state.lastLogin = action.payload.lastLogin;
       state.chainId = action.payload.chainId;
+      state.permissionType = action.payload.permissionType;
     },
     signOutAccount: (state) => {
       state.account = '';
@@ -72,7 +80,7 @@ const userSlice = createSlice({
       state.firstName = '';
       state.lastName = '';
       state.ens = '';
-      state.startDate = 0;
+      state.lastLogin = 0;
       state.chainId = 0;
       state.accessToken = '';
     }
@@ -91,7 +99,7 @@ const userSlice = createSlice({
         state.firstName = action.payload.firstName;
         state.lastName = action.payload.lastName;
         state.ens = action.payload.ens;
-        state.startDate = action.payload.startDate;
+        state.lastLogin = action.payload.lastLogin;
         state.chainId = action.payload.chainId;  
       })
       .addCase(fetchUserById.rejected, (state) => {
@@ -102,7 +110,7 @@ const userSlice = createSlice({
         state.firstName = '';
         state.lastName = '';
         state.ens = '';
-        state.startDate = 0;
+        state.lastLogin = 0;
         state.chainId = 0;
         state.accessToken = '';
       })
@@ -117,7 +125,7 @@ export const selectFirstName = (state: RootState) => state.user.firstName;
 export const selectLastName = (state: RootState) => state.user.lastName;
 export const selectAccessToken = (state: RootState) => state.user.accessToken;
 export const selectDappName = (state: RootState) => state.user.dappName;
-export const selectStartDate = (state: RootState) => state.user.startDate;
+export const selectLastLogin = (state: RootState) => state.user.lastLogin;
 export const selectChainId = (state: RootState) => state.user.chainId;
 export const selectPermissionFlags= (state: RootState) => state.user.permissionFlags;
 export const selectEthersWeb3Provider= (state: RootState) => state.user.ethersWeb3Provider;
@@ -128,6 +136,7 @@ export const {
   setUser,
   signOutAccount,
   setAccesToken,
+  setisVerified,
 } = userSlice.actions;
 
 export default userSlice.reducer;

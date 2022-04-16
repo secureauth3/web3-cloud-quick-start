@@ -7,12 +7,9 @@ import {
   useNavigate,
   useLocation,
   Navigate,
-  Outlet
 } from 'react-router-dom';
 
 // Components
-import NFTs from './features/nfts/nfts';
-import NFT from './features/nfts/nft/nft';
 import Dashboard from './features/dashboard/dashboard';
 import Nav from './features/nav/nav';
 import { RequireAuth } from './features/auth/requireAuth';
@@ -25,20 +22,6 @@ export default function App() {
     <Routes>
       <Route path="/auth" element={<AuthPage />} />
       <Route element={<Nav />}>
-        <Route path="/nfts"
-          element={
-            <RequireAuth>
-              <NFTs />
-            </RequireAuth>
-          } 
-        />
-        <Route path="nfts/:id"
-          element={
-            <RequireAuth>
-              <NFT />
-            </RequireAuth>
-          }
-        />
         <Route path="/dashboard"
           element={
             <RequireAuth>
