@@ -1,0 +1,25 @@
+$brand-color: #6555DF;
+
+.auth-container {
+   padding-top: 100px;
+}
+
+.auth-error-message-container {
+    & p {
+        margin-top: 1%;
+        text-align: center;
+        color: red;
+    }
+}
+
+/* Tablet styling */
+@media only screen and (min-width: 768px) {
+    
+}
+  
+/* Desktop styling */
+@media only screen and (min-width: 1024px) {
+}
+  
+/* Desktop Large styling */
+@media only screen and (min-width: 1440px) {}

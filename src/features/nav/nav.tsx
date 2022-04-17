@@ -4,7 +4,7 @@ import {
     useNavigate
 } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectAccount, setAccesToken, setisVerified, setUser } from '../auth/userSlice';
+import { selectAccount, selectisVerified, setAccesToken, setisVerified, setUser, signOutAccount } from '../auth-features/userSlice';
 import { useAuth } from 'web3-cloud';
 
 export default function Nav() {
@@ -30,9 +30,10 @@ function AuthStatus() {
   let auth = useAuth();
   const dispatch = useAppDispatch();
   let navigate = useNavigate();
-  const account = useAppSelector(selectAccount); 
+  const account = useAppSelector(selectAccount);
+  const isVerified = useAppSelector(selectisVerified); 
 
-  if (account === '') {
+  if (!isVerified) {
     return <p>You are not logged in.</p>;
   }
 
@@ -41,12 +42,12 @@ function AuthStatus() {
       Welcome {account}!{" "}
       <button
         onClick={async () => {
-          // Sign out user
+          // Secure Auth3 - Sign out user
           const signOutResult = await auth.auth3Signout();
-          dispatch(setisVerified(false));
-          dispatch(setAccesToken(''));
-          dispatch(setUser(signOutResult.user));
-          navigate('/auth', { replace: true });
+          if (signOutResult.authError === '' && !signOutResult.isAuthenticated) {
+            dispatch(signOutAccount());
+            navigate('/auth', { replace: true });
+          }
         }}
       >
       Sign out

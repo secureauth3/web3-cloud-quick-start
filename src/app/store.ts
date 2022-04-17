@@ -1,5 +1,5 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import userSlice from '../features/auth/userSlice';
+import userSlice from '../features/auth-features/userSlice';
 import nftsSlice from '../features/nfts/nftsSlice';
 export const store = configureStore({
   reducer: {

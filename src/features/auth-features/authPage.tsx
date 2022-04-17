@@ -21,14 +21,13 @@ export default function AuthPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isVerifiying, setIsVerifiying] = useState(false);
 
-
   const authCallbackData = useCallback(async (web3Values: FormSignatureData) => {
     try {
       let signInResults;
       setIsVerifiying(true);
       switch(web3Values.actionType) {
         case 'SIGN_UP':
-          // Sign up user
+          // Secure Auth3 - Sign up user
           const DEFAULT_NAME = {
             firstName: 'First',
             lastName: 'Last',
@@ -44,65 +43,55 @@ export default function AuthPage() {
               permissionFlag: 3,
             } as NewAuth3User
           );
-          console.log('sign up results:',signUpResults);
           if (!signUpResults.isSignedUp) {
             setErrorMessage(signUpResults.authError);
             setIsVerifiying(false);
             return;
           }
 
-          // Sign in user after account creation sucessful
+          // Secure Auth3 - Sign in user after account creation sucessful
           signInResults = await auth.auth3Signin({
             address: web3Values.address,
             email: web3Values.email,
             signature: web3Values.signature,
             message: web3Values.message
           });
-          console.log('verify results:',signInResults);
           if (!signInResults.isAuthenticated) {
             setErrorMessage(signInResults.authError);
             setIsVerifiying(false);
             return;
           }
       
-          // Save authenicated user and acces token in Redux store
+          // Save authenicated user and acces token in Redux store and navigate to protected route
           dispatch(setisVerified(signInResults.isAuthenticated));
           dispatch(setAccesToken(signInResults.accessToken));
           dispatch(setUser(signInResults.user));
-
-          // Navigate to protected route
-          console.log('passed verification, navigating to:', from);
           navigate(from, { replace: true });
           break;
         case 'SIGN_IN':
-          // Sign in user after account creation sucessful
+          // Secure Auth3 - Sign in user after account creation sucessful
           signInResults = await auth.auth3Signin({
             address: web3Values.address,
             email: web3Values.email,
             signature: web3Values.signature,
             message: web3Values.message
           });
-          console.log('verify results:',signInResults);
           if (!signInResults.isAuthenticated) {
             setErrorMessage(signInResults.authError);
             setIsVerifiying(false);
             return;
           }
     
-          // Save authenicated user and acces token in Redux store
+          // Save authenicated user and acces token in Redux store and navigate to protected route
           dispatch(setisVerified(signInResults.isAuthenticated));
           dispatch(setAccesToken(signInResults.accessToken));
           dispatch(setUser(signInResults.user));
-
-          // Navigate to protected route
-          console.log('passed verification, navigating to:', from);
           navigate(from, { replace: true });
           break;
         default:
           break;
       }
     } catch(err) {
-      console.log(err)
       setIsVerifiying(false);
       setErrorMessage('Error when trying to sign in/sign up.')
     }  
