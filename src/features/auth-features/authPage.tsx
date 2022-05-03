@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ErrorMessageData, Form, FormSignatureData, NewAuth3User, useAuth } from "web3-cloud";
+import { ErrorMessageData, Form, FormSignatureData, NewAuth3User, useAuth, useChainInfo } from "web3-cloud";
 
 import { useAppDispatch } from "../../app/hooks";
-import { setAccesToken, setisVerified, setUser } from "./userSlice";
+import { setAccesToken, setChainIdInfo, setisVerified, setUser } from "./userSlice";
 
 import Loading from "../loading/Loading";
 import './authPage.scss';
@@ -12,6 +12,7 @@ const INFURA_KEY = process.env.REACT_APP_INFURA_KEY? process.env.REACT_APP_INFUR
 
 export default function AuthPage() {
   let auth = useAuth();
+  const { getChainInfo } = useChainInfo();
   const dispatch = useAppDispatch();
   let navigate = useNavigate();
   let location: any = useLocation();
@@ -66,6 +67,7 @@ export default function AuthPage() {
           dispatch(setisVerified(signInResults.isAuthenticated));
           dispatch(setAccesToken(signInResults.accessToken));
           dispatch(setUser(signInResults.user));
+          dispatch(setChainIdInfo(getChainInfo(web3Values.chainId)));
           navigate(from, { replace: true });
           break;
         case 'SIGN_IN':
@@ -95,7 +97,7 @@ export default function AuthPage() {
       setIsVerifiying(false);
       setErrorMessage('Error when trying to sign in/sign up.')
     }  
-  }, [auth, dispatch, from, navigate]);
+  }, [auth, dispatch, from, getChainInfo, navigate]);
   
   const authCallbackError = useCallback((error: ErrorMessageData) => {
     setIsVerifiying(false);

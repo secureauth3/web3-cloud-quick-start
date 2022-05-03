@@ -4,7 +4,7 @@ import {
     useNavigate
 } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectAccount, selectisVerified, setAccesToken, setisVerified, setUser, signOutAccount } from '../auth-features/userSlice';
+import { selectAccount, selectisVerified, signOutAccount } from '../auth-features/userSlice';
 import { useAuth } from 'web3-cloud';
 
 export default function Nav() {

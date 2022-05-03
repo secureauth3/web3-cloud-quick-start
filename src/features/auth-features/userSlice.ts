@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ethers } from 'ethers';
 import { VerifiedAuth3User } from 'web3-cloud';
 import { RootState } from '../../app/store';
 import { fetchUser } from './userAPI';
@@ -16,8 +15,9 @@ export interface UserState {
   lastLogin: string;
   chainId: number;
   accessToken: string;
-  ethersWeb3Provider: ethers.providers.Web3Provider;
   isVerified: boolean;
+  networkName: string;
+  networkScanner: string;
   status: 'idle' | 'loading' | 'failed'
 }
   
@@ -35,7 +35,8 @@ const initialState: UserState = {
   status: 'idle',
   accessToken: '',
   isVerified: false,
-  ethersWeb3Provider: {} as ethers.providers.Web3Provider
+  networkName: '',
+  networkScanner: ''
 };
 
 export const fetchUserById = createAsyncThunk(
@@ -50,8 +51,9 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setWeb3Provider: (state, action: PayloadAction<ethers.providers.Web3Provider>)  =>{
-      state.ethersWeb3Provider = action.payload;
+    setChainIdInfo: (state, action: PayloadAction<{networkName: string, networkScanner: string}>) => {
+      state.networkName = action.payload.networkName;
+      state.networkScanner = action.payload.networkScanner;
     },
     setAccesToken: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload;
@@ -85,7 +87,6 @@ const userSlice = createSlice({
       state.status = 'idle';
       state.accessToken = '';
       state.isVerified = false;
-      state.ethersWeb3Provider = {} as ethers.providers.Web3Provider;
     }
   },
   extraReducers: (builder) => {
@@ -133,13 +134,12 @@ export const selectLastLogin = (state: RootState) => state.user.lastLogin;
 export const selectChainId = (state: RootState) => state.user.chainId;
 export const selectPermissionFlags= (state: RootState) => state.user.permissionFlags;
 export const selectPermissionType= (state: RootState) => state.user.permissionType;
-export const selectEthersWeb3Provider= (state: RootState) => state.user.ethersWeb3Provider;
 export const selectisVerified= (state: RootState) => state.user.isVerified;
 
 // Actions
 export const { 
-  setWeb3Provider,
   setUser,
+  setChainIdInfo,
   signOutAccount,
   setAccesToken,
   setisVerified,

@@ -7,7 +7,7 @@ import {
   useLocation,
   Navigate,
 } from 'react-router-dom';
-import { useAuth } from 'web3-cloud';
+import { useAuth, useChainInfo } from 'web3-cloud';
 
 import Dashboard from './features/dashboard/dashboard';
 import Nav from './features/nav/nav';
@@ -16,13 +16,14 @@ import AuthPage from './features/auth-features/authPage';
 import Loading from './features/loading/Loading';
 
 import { useAppDispatch } from './app/hooks';
-import { setAccesToken, setisVerified, setUser } from './features/auth-features/userSlice';
+import { setAccesToken, setChainIdInfo, setisVerified, setUser } from './features/auth-features/userSlice';
 
 export default function App() {
   let auth = useAuth();
   const dispatch = useAppDispatch();
   let location: any = useLocation();
   let navigate = useNavigate();
+  const { getChainInfo } = useChainInfo();
 
   let from = location.pathname;
   const [isCheckingSSO, setisCheckingSSO] = useState(false);
@@ -41,6 +42,7 @@ export default function App() {
         dispatch(setisVerified(ssoResult.isAuthenticated));
         dispatch(setAccesToken(ssoResult.accessToken));
         dispatch(setUser(ssoResult.user));
+        dispatch(setChainIdInfo(getChainInfo(ssoResult.user.chainId)));
 
         // Navigate to protected route
         navigate(from, { replace: true });

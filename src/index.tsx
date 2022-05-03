@@ -16,9 +16,9 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <SecureAuth3Provider apiKey={AUTH3_API_KEY} appId="xxxxxxxxxxx">
+        <SecureAuth3Provider apiKey={AUTH3_API_KEY}>
           <App />
-        </SecureAuth3Provider> 
+        </SecureAuth3Provider>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,
