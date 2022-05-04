@@ -8,9 +8,9 @@ A simple React application with Authenticated routes and Redux state management.
 - web3-cloud (https://www.npmjs.com/package/web3-cloud)
 
 # Feature
-1. Sign in and sign up (powered by web3-cloud)
+1. Secure Auth3 - Sign in and sign up Auth provider (powered by web3-cloud)
 2. Redux state management
-3. Authenticated routes
+3. Protected routes
 4. Nested routes
 
 # Deployed to AWS
