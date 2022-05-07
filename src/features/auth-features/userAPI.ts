@@ -1,5 +1,3 @@
-const API_PREFIX = '';
-
 export async function fetchUser(account: string, accessToken: string, apiKey: string) {
     const requestOptionsGetUser: any = {
       method: 'GET',
@@ -10,7 +8,7 @@ export async function fetchUser(account: string, accessToken: string, apiKey: st
     };
   
     return new Promise<{ data: any }>((resolve, reject) => {
-      fetch(`${API_PREFIX}/api/v1/users/${account}`, requestOptionsGetUser)
+      fetch(`https://api.secureauth3.com/api/v1/users/${account}`, requestOptionsGetUser)
       .then(response => response.json())
       .then(data => {
         resolve({ data: data })

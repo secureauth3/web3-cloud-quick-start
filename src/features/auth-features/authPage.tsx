@@ -1,23 +1,22 @@
 import React, { useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ErrorMessageData, Form, FormSignatureData, NewAuth3User, useAuth, useChainInfo } from "web3-cloud";
-
-import { useAppDispatch } from "../../app/hooks";
-import { setAccesToken, setChainIdInfo, setisVerified, setRefreshToken, setUser, setWalletStatus } from "./userSlice";
+import { ErrorMessageData, Form, FormSignatureData, NewAuth3User, useAuth, useAuth3Token, useChainInfo } from "web3-cloud";
 
 import Loading from "../loading/Loading";
+import { AUTH3_REFRESH_TOKEN_SECRET, INFURA_KEY } from "../../utils/utils";
+
+import { useAppDispatch } from "../../app/hooks";
+import { setChainIdInfo, setisVerified, setUser } from "./userSlice";
 import './authPage.scss';
 
-const INFURA_KEY = process.env.REACT_APP_INFURA_KEY? process.env.REACT_APP_INFURA_KEY: ''; 
-
 export default function AuthPage() {
-  let auth = useAuth();
+  const auth = useAuth();
+  const { setAuth3Token, setWalletStatus } = useAuth3Token(); 
   const { getChainInfo } = useChainInfo();
   const dispatch = useAppDispatch();
-  let navigate = useNavigate();
-  let location: any = useLocation();
+  const navigate = useNavigate();
+  const location: any = useLocation();
 
-  const MESSAGE_TO_SIGN = 'Your message that users will sign';
   let from = location.state?.from?.pathname || "/dashboard";
   const [errorMessage, setErrorMessage] = useState('');
   const [isVerifiying, setIsVerifiying] = useState(false);
@@ -66,13 +65,11 @@ export default function AuthPage() {
       
           // Save authenicated user and acces token in Redux store and navigate to protected route
           dispatch(setisVerified(signInResults.isAuthenticated));
-          dispatch(setAccesToken(signInResults.accessToken));
           dispatch(setUser(signInResults.user));
           dispatch(setChainIdInfo(getChainInfo(web3Values.chainId)));
-          dispatch(setWalletStatus({
-            isWalletConnected: 'true',
-            walletName: web3Values.provideType
-          }));
+          setWalletStatus('true', web3Values.provideType);
+          setAuth3Token(signInResults.accessToken, signInResults.refreshToken, AUTH3_REFRESH_TOKEN_SECRET);
+
           navigate(from, { replace: true });
           break;
         case 'SIGN_IN':
@@ -92,14 +89,11 @@ export default function AuthPage() {
     
           // Save authenicated user and acces token in Redux store and navigate to protected route
           dispatch(setisVerified(signInResults.isAuthenticated));
-          dispatch(setAccesToken(signInResults.accessToken));
-          dispatch(setRefreshToken(signInResults.refreshToken));
           dispatch(setUser(signInResults.user));
           dispatch(setChainIdInfo(getChainInfo(web3Values.chainId)));
-          dispatch(setWalletStatus({
-            isWalletConnected: 'true',
-            walletName: web3Values.provideType
-          }));
+          setWalletStatus('true', web3Values.provideType);
+          setAuth3Token(signInResults.accessToken, signInResults.refreshToken, AUTH3_REFRESH_TOKEN_SECRET);
+
           navigate(from, { replace: true });
           break;
         default:
@@ -107,9 +101,9 @@ export default function AuthPage() {
       }
     } catch(err) {
       setIsVerifiying(false);
-      setErrorMessage('Error when trying to sign in/sign up.')
+      setErrorMessage('Error when trying to sign in/sign up.');
     }  
-  }, [auth, dispatch, from, getChainInfo, navigate]);
+  }, [auth, dispatch, from, getChainInfo, navigate, setAuth3Token, setWalletStatus]);
   
   const authCallbackError = useCallback((error: ErrorMessageData) => {
     setIsVerifiying(false);
@@ -129,7 +123,7 @@ export default function AuthPage() {
               size='large'
               dappname='Find my NFT'
               disableErrorDisplay={true}
-              messageToSign={MESSAGE_TO_SIGN}
+              messageToSign='Your message that users will sign'
               infuraId={INFURA_KEY? INFURA_KEY : ''}   
               logourl='https://idrisbowman.com/images/idrisBowmanIcon.jpg'
               homePageurl='https://www.secureauth3.com'
