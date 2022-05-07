@@ -3,9 +3,9 @@ import {
     Outlet,
     useNavigate
 } from 'react-router-dom';
+import { useAuth, useAuth3Token } from 'web3-cloud';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {  selectisVerified, signOutAccount } from '../auth-features/userSlice';
-import { useAuth } from 'web3-cloud';
 
 export default function Nav() {
   return (
@@ -30,6 +30,7 @@ function AuthStatus() {
   let auth = useAuth();
   const dispatch = useAppDispatch();
   let navigate = useNavigate();
+  const { localSignout } = useAuth3Token(); 
   const isVerified = useAppSelector(selectisVerified); 
 
   if (!isVerified) {
@@ -43,6 +44,7 @@ function AuthStatus() {
           // Secure Auth3 - Sign out user
           const signOutResult = await auth.auth3Signout();
           if (signOutResult.authError === '' && !signOutResult.isAuthenticated) {
+            localSignout();
             dispatch(signOutAccount());
             navigate('/auth', { replace: true });
           }

@@ -7,7 +7,7 @@ import {
   useLocation,
   Navigate,
 } from 'react-router-dom';
-import { useAuth, useChainInfo } from 'web3-cloud';
+import { useAuth, useAuth3Token, useChainInfo } from 'web3-cloud';
 
 import Dashboard from './features/dashboard/dashboard';
 import Nav from './features/nav/nav';
@@ -15,18 +15,17 @@ import { RequireAuth } from './features/auth-features/requireAuth';
 import AuthPage from './features/auth-features/authPage';
 import Loading from './features/loading/Loading';
 
-import { useAppDispatch, useAppSelector } from './app/hooks';
-import { selectRefreshToken, setAccesToken, setChainIdInfo, setisVerified, setUser } from './features/auth-features/userSlice';
+import { useAppDispatch } from './app/hooks';
+import { setChainIdInfo, setisVerified, setUser } from './features/auth-features/userSlice';
+import { AUTH3_REFRESH_TOKEN_SECRET } from './utils/utils';
 
 export default function App() {
   let auth = useAuth(); 
+  const {getAccessToken, setAuth3Token} = useAuth3Token(); 
   const { getChainInfo } = useChainInfo();
-
   let location: any = useLocation();
   let navigate = useNavigate();
-
   const dispatch = useAppDispatch();
-  const refreshToken = useAppSelector(selectRefreshToken);
 
   let from = location.pathname;
   const [isCheckingSSO, setisCheckingSSO] = useState(false);
@@ -38,18 +37,20 @@ export default function App() {
     */
     const doSingleSignin = async () => {
       setisCheckingSSO(true);
-      const ssoResult = await auth.auth3SSO(refreshToken);
+      const auth3Token = getAccessToken(AUTH3_REFRESH_TOKEN_SECRET);
+      const ssoResult = await auth.auth3SSO(auth3Token.refreshToken, auth3Token.accessToken);
       setisCheckingSSO(false);
       if (ssoResult.isAuthenticated) {
         // Save authenicated user and acces token in Redux store
         dispatch(setisVerified(ssoResult.isAuthenticated));
-        dispatch(setAccesToken(ssoResult.accessToken));
         dispatch(setUser(ssoResult.user));
         dispatch(setChainIdInfo(getChainInfo(ssoResult.user.chainId)));
+        setAuth3Token(ssoResult.accessToken, ssoResult.refreshToken, AUTH3_REFRESH_TOKEN_SECRET);
 
         // Navigate to protected route
         navigate(from, { replace: true });
       }
+      return;
     }
 
     doSingleSignin();
