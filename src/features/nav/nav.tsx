@@ -4,7 +4,7 @@ import {
     useNavigate
 } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectAccount, selectisVerified, signOutAccount } from '../auth-features/userSlice';
+import {  selectisVerified, signOutAccount } from '../auth-features/userSlice';
 import { useAuth } from 'web3-cloud';
 
 export default function Nav() {
@@ -30,7 +30,6 @@ function AuthStatus() {
   let auth = useAuth();
   const dispatch = useAppDispatch();
   let navigate = useNavigate();
-  const account = useAppSelector(selectAccount);
   const isVerified = useAppSelector(selectisVerified); 
 
   if (!isVerified) {
@@ -39,7 +38,6 @@ function AuthStatus() {
 
   return (
     <p>
-      Welcome {account}!{" "}
       <button
         onClick={async () => {
           // Secure Auth3 - Sign out user

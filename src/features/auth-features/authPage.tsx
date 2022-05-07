@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ErrorMessageData, Form, FormSignatureData, NewAuth3User, useAuth, useChainInfo } from "web3-cloud";
 
 import { useAppDispatch } from "../../app/hooks";
-import { setAccesToken, setChainIdInfo, setisVerified, setUser } from "./userSlice";
+import { setAccesToken, setChainIdInfo, setisVerified, setRefreshToken, setUser, setWalletStatus } from "./userSlice";
 
 import Loading from "../loading/Loading";
 import './authPage.scss';
@@ -55,7 +55,8 @@ export default function AuthPage() {
             address: web3Values.address,
             email: web3Values.email,
             signature: web3Values.signature,
-            message: web3Values.message
+            message: web3Values.message,
+            token: web3Values.token
           });
           if (!signInResults.isAuthenticated) {
             setErrorMessage(signInResults.authError);
@@ -68,6 +69,10 @@ export default function AuthPage() {
           dispatch(setAccesToken(signInResults.accessToken));
           dispatch(setUser(signInResults.user));
           dispatch(setChainIdInfo(getChainInfo(web3Values.chainId)));
+          dispatch(setWalletStatus({
+            isWalletConnected: 'true',
+            walletName: web3Values.provideType
+          }));
           navigate(from, { replace: true });
           break;
         case 'SIGN_IN':
@@ -76,7 +81,8 @@ export default function AuthPage() {
             address: web3Values.address,
             email: web3Values.email,
             signature: web3Values.signature,
-            message: web3Values.message
+            message: web3Values.message,
+            token: web3Values.token
           });
           if (!signInResults.isAuthenticated) {
             setErrorMessage(signInResults.authError);
@@ -87,7 +93,13 @@ export default function AuthPage() {
           // Save authenicated user and acces token in Redux store and navigate to protected route
           dispatch(setisVerified(signInResults.isAuthenticated));
           dispatch(setAccesToken(signInResults.accessToken));
+          dispatch(setRefreshToken(signInResults.refreshToken));
           dispatch(setUser(signInResults.user));
+          dispatch(setChainIdInfo(getChainInfo(web3Values.chainId)));
+          dispatch(setWalletStatus({
+            isWalletConnected: 'true',
+            walletName: web3Values.provideType
+          }));
           navigate(from, { replace: true });
           break;
         default:

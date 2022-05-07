@@ -15,9 +15,12 @@ export interface UserState {
   lastLogin: string;
   chainId: number;
   accessToken: string;
+  refreshToken: string;
   isVerified: boolean;
   networkName: string;
   networkScanner: string;
+  isConnected: string;
+  walletName: string;
   status: 'idle' | 'loading' | 'failed'
 }
   
@@ -34,9 +37,12 @@ const initialState: UserState = {
   chainId: 0,
   status: 'idle',
   accessToken: '',
+  refreshToken: 'default',
   isVerified: false,
   networkName: '',
-  networkScanner: ''
+  networkScanner: '',
+  isConnected: '',
+  walletName: ''
 };
 
 export const fetchUserById = createAsyncThunk(
@@ -55,8 +61,17 @@ const userSlice = createSlice({
       state.networkName = action.payload.networkName;
       state.networkScanner = action.payload.networkScanner;
     },
+    setWalletStatus: (state, action: PayloadAction<{isWalletConnected: string, walletName: string}>) => {
+      localStorage.setItem('isWalletConnected', `${action.payload.isWalletConnected}`);
+      localStorage.setItem('walletConnectedProvider', action.payload.walletName);
+      state.isConnected = action.payload.isWalletConnected;
+      state.walletName = action.payload.walletName;
+    },
     setAccesToken: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload;
+    },
+    setRefreshToken: (state, action: PayloadAction<string>) => {
+      state.refreshToken = action.payload;
     },
     setisVerified: (state, action: PayloadAction<boolean>) => {
       state.isVerified = action.payload;
@@ -74,6 +89,8 @@ const userSlice = createSlice({
       state.permissionType = action.payload.permissionType;
     },
     signOutAccount: (state) => {
+      localStorage.setItem('isWalletConnected', 'false');
+      localStorage.setItem('walletConnectedProvider', '');
       state.account = '';
       state.dappName = '';
       state.permissionFlags = 0;
@@ -86,7 +103,10 @@ const userSlice = createSlice({
       state.chainId = 0;
       state.status = 'idle';
       state.accessToken = '';
+      state.refreshToken = '';
       state.isVerified = false;
+      state.isConnected = '';
+      state.walletName = '';
     }
   },
   extraReducers: (builder) => {
@@ -129,19 +149,23 @@ export const selectEns = (state: RootState) => state.user.ens;
 export const selectFirstName = (state: RootState) => state.user.firstName;
 export const selectLastName = (state: RootState) => state.user.lastName;
 export const selectAccessToken = (state: RootState) => state.user.accessToken;
+export const selectRefreshToken = (state: RootState) => state.user.refreshToken;
 export const selectDappName = (state: RootState) => state.user.dappName;
 export const selectLastLogin = (state: RootState) => state.user.lastLogin;
 export const selectChainId = (state: RootState) => state.user.chainId;
 export const selectPermissionFlags= (state: RootState) => state.user.permissionFlags;
 export const selectPermissionType= (state: RootState) => state.user.permissionType;
 export const selectisVerified= (state: RootState) => state.user.isVerified;
+export const selectWalletName = (state: RootState) => state.user.walletName;
 
 // Actions
 export const { 
   setUser,
   setChainIdInfo,
+  setWalletStatus,
   signOutAccount,
   setAccesToken,
+  setRefreshToken,
   setisVerified,
 } = userSlice.actions;
 

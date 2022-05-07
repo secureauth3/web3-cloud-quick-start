@@ -15,15 +15,18 @@ import { RequireAuth } from './features/auth-features/requireAuth';
 import AuthPage from './features/auth-features/authPage';
 import Loading from './features/loading/Loading';
 
-import { useAppDispatch } from './app/hooks';
-import { setAccesToken, setChainIdInfo, setisVerified, setUser } from './features/auth-features/userSlice';
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import { selectRefreshToken, setAccesToken, setChainIdInfo, setisVerified, setUser } from './features/auth-features/userSlice';
 
 export default function App() {
-  let auth = useAuth();
-  const dispatch = useAppDispatch();
+  let auth = useAuth(); 
+  const { getChainInfo } = useChainInfo();
+
   let location: any = useLocation();
   let navigate = useNavigate();
-  const { getChainInfo } = useChainInfo();
+
+  const dispatch = useAppDispatch();
+  const refreshToken = useAppSelector(selectRefreshToken);
 
   let from = location.pathname;
   const [isCheckingSSO, setisCheckingSSO] = useState(false);
@@ -35,7 +38,7 @@ export default function App() {
     */
     const doSingleSignin = async () => {
       setisCheckingSSO(true);
-      const ssoResult = await auth.auth3SSO();
+      const ssoResult = await auth.auth3SSO(refreshToken);
       setisCheckingSSO(false);
       if (ssoResult.isAuthenticated) {
         // Save authenicated user and acces token in Redux store
@@ -63,8 +66,8 @@ export default function App() {
 
   return (
     <Routes>
-      {doRenderAuthPage()}
       <Route element={<Nav />}>
+        {doRenderAuthPage()}
         <Route path="/dashboard"
           element={
             <RequireAuth>
