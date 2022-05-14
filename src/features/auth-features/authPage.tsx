@@ -55,7 +55,8 @@ export default function AuthPage() {
             email: web3Values.email,
             signature: web3Values.signature,
             message: web3Values.message,
-            token: web3Values.token
+            token: web3Values.token,
+            chainId: web3Values.chainId
           });
           if (!signInResults.isAuthenticated) {
             setErrorMessage(signInResults.authError);
@@ -79,7 +80,8 @@ export default function AuthPage() {
             email: web3Values.email,
             signature: web3Values.signature,
             message: web3Values.message,
-            token: web3Values.token
+            token: web3Values.token,
+            chainId: web3Values.chainId
           });
           if (!signInResults.isAuthenticated) {
             setErrorMessage(signInResults.authError);
