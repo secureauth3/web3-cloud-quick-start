@@ -1,17 +1,17 @@
-# Web3 Cloud quick start app
-A simple React application with Authenticated routes and Redux state management.
+# Web3 Cloud quick start DApp
+A simple Polygon DApp with web3 wallet authenticated routes and Redux state management. Powered by Secure Auth3
 
 # Tech Stack
-- React
+- react
 - react-router-dom
 - react-redux
 - web3-cloud (https://www.npmjs.com/package/web3-cloud)
 - Secure Auth3 (https://www.secureauth3.com)
 
 # Feature
-1. Secure Auth3 - Sign in and sign up Auth provider (powered by web3-cloud)
+1. Ethereum wallet Sign in and sign up
 2. Redux state management
-3. Protected routeS
+3. Protected routes
 
 ## Local dev
 1. Install Dependencies
