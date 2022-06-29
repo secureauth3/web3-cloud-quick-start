@@ -1,4 +1,4 @@
-# Web3 Cloud quick start DApp
+# Secure Auth3 quick start DApp
 A simple Polygon DApp with web3 wallet authenticated routes and Redux state management. Powered by Secure Auth3
 
 # Tech Stack
